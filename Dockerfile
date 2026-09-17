@@ -5,5 +5,6 @@ RUN unzip -q /tmp/game.zip -d /game
 
 FROM barichello/godot-ci:4.4.1
 COPY --from=package /game /game
+RUN godot --headless --editor --path /game --quit
 
 CMD ["godot", "--headless", "--path", "/game", "--server"]
