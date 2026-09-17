@@ -1,0 +1,11 @@
+FROM alpine:3.20 AS package
+RUN apk add --no-cache unzip
+COPY game.zip /tmp/game.zip
+RUN unzip -q /tmp/game.zip -d /game
+
+FROM barichello/godot-ci:4.4.1 AS build
+COPY --from=package /game /game
+RUN godot --headless --editor --path /game --quit && mkdir -p /site && godot --headless --path /game --export-release "Web" /site/index.html
+
+FROM nginx:1.27-alpine
+COPY --from=build /site /usr/share/nginx/html
